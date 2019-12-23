@@ -1,0 +1,47 @@
+﻿<div class="easyui-panel" title="" style="width:100%;max-width:500px;padding:20px 60px;">
+    <form id="frmPrjCrt" class="easyui-form" action="@Url.Action("Save","Project" , new { area = "Admin" })" method="post" data-options="novalidate:true">
+        <div style="margin-bottom:20px">
+            <input class="easyui-textbox" name="projName" style="width:100%;" data-options="label:'專案名稱:',multiline:false" />
+        </div>
+        <div style="margin-bottom:20px">
+            <input class="easyui-textbox" name="projSQL" style="width:100%;height:200px" data-options="label:'SQL:',multiline:true" />
+        </div>
+        <div style="margin-bottom:20px">
+            <select class="easyui-combobox" name="chartType" editable="false" label="類型:" style="width:100%"
+                    data-options="valueField:'Value',textField:'Text',method:'get',url:'@Url.Action("GetChartList","Parent" , new { area = "Admin" })'"></select>
+        </div>
+        @Html.AntiForgeryToken()
+    </form>
+    <div style="text-align:center;padding:5px 0">
+        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="submitForm()" style="width:80px">Submit</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="clearForm()" style="width:80px">Clear</a>
+    </div>
+</div>
+<script>
+
+    function submitForm() {
+        $('#frmPrjCrt').form('submit', {
+            onSubmit: function () {
+                return $(this).form('enableValidation').form('validate');
+            },
+            success: function (data) {
+
+                data = JSON.parse(data);
+                switch (data.Code) {
+                    case "0":
+                        $.messager.alert('Info', data.Message, 'error');
+                        break;
+                    default:
+                        $.messager.alert('Info', data.Message, 'info');
+                        clearForm();
+                        break;
+                }
+                
+            }
+        });
+    }
+
+    function clearForm() {
+        $('#frmPrjCrt').form('clear');
+    }
+</script>

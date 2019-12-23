@@ -1,0 +1,35 @@
+﻿<form method="post">
+    <table id="prjEditTable" class="dv-table" style="width:100%;background:#fafafa;padding:5px;margin-top:5px;">
+        <tr>
+            <td>名稱</td>
+            <td><input name="ProjectName" class="easyui-textbox" required="true" /></td>
+        </tr>
+        <tr>
+            <td>SQL</td>
+            <td><input name="ProjectSQL" class="easyui-textbox" style="width:400px;height:200px" required="true" data-options="multiline:true" /></td>
+        </tr>
+        <tr>
+            <td>類型</td>
+            <td>
+                <select class="easyui-combobox" name="ChartId" editable="false" label="" style="width:100%"
+                        data-options="valueField:'Value',textField:'Text',method:'get',url:'@Url.Action("GetChartList","Parent" , new { area = "Admin" })'"></select>
+                <input type="hidden" id="id" name="ProjectId" value="ProjectId" />
+            </td>
+        </tr>
+        <tr>
+            <td>連線</td>
+            <td>
+                <select class="easyui-combobox" name="CId" editable="false" label="" style="width:100%"
+                        data-options="valueField:'Value',textField:'Text',method:'get',url:'@Url.Action("GetConnTypeList","Parent" , new { area = "Admin" })'"></select>
+            </td>
+        </tr>
+
+
+    </table>
+    <div style="padding:5px 0;text-align:right;padding-right:30px">
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-link" plain="true" onclick="make(this)">URL</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="test(this)">Test SQL</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-save" plain="true" onclick="save1(this)">Save</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="cancel1(this)">Cancel</a>
+    </div>
+</form>

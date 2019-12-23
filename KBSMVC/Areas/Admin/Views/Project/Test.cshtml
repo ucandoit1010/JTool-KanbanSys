@@ -1,0 +1,28 @@
+﻿@using System.Data;
+@model DataTable
+
+
+<table id="testTable" class="easyui-datagrid" style="width:400px;height:auto;">
+    <thead>
+        <tr>
+            @foreach (DataColumn col in Model.Columns)
+            {
+                <th data-options="field:'@col.ColumnName',width:90">@col.ColumnName</th>
+            }
+
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (DataRow row in Model.Rows)
+        {
+            <tr>
+            @foreach (DataColumn col in Model.Columns)
+            {
+              <td>@row[col].ToString()</td>
+            }
+            </tr>
+        }
+
+    </tbody>
+</table>

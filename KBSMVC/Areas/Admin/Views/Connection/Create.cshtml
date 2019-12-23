@@ -1,0 +1,50 @@
+﻿@{ 
+    List<SelectListItem> selectList = (List<SelectListItem>)ViewData["DBTypeList"];
+}
+
+<div class="easyui-panel" title="" style="width:100%;max-width:500px;padding:20px 60px;">
+    <form id="frmConnCrt" class="easyui-form" action="@Url.Action("Save","Connection" , new { area = "Admin" })" method="post" data-options="novalidate:true">
+        <div style="margin-bottom:20px">
+            <input class="easyui-textbox" name="AliasName" style="width:100%;" data-options="label:'別名:',multiline:false" />
+        </div>
+        <div style="margin-bottom:20px">
+            <input class="easyui-textbox" name="ConnStr" style="width:100%;height:180px" data-options="label:'連線字串:',multiline:true" />
+        </div>
+        <div style="margin-bottom:20px">
+            @Html.DropDownList("connType", selectList, new { @class = "easyui-combobox", editable = "false", label = "資料庫:", style = "width:100%" })
+            @*<select  name="connType" editable="false" label="資料庫:" style="width:100%">*@
+            @*@*</select>*@
+        </div>
+        @Html.AntiForgeryToken()
+    </form>
+    <div style="text-align:center;padding:5px 0">
+        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="submitForm()" style="width:80px">Submit</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="clearForm()" style="width:80px">Clear</a>
+    </div>
+</div>
+<script>
+        function submitForm(){
+            $('#frmConnCrt').form('submit',{
+                onSubmit:function(){
+                    return $(this).form('enableValidation').form('validate');
+                },
+                success: function (data) {
+
+                    data = JSON.parse(data);
+                    switch (data.Code) {
+                        case "0":
+                            $.messager.alert('Info', data.Message, 'error');
+                            break;
+                        default:
+                            $.messager.alert('Info', data.Message, 'info');
+                            clearForm();
+                            break;
+                    }
+
+                }
+            });
+        }
+        function clearForm(){
+            $('#frmConnCrt').form('clear');
+        }
+</script>

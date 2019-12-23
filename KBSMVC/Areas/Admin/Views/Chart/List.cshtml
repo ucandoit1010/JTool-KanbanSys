@@ -1,0 +1,121 @@
+﻿<table id="chartDG" title="" style="width:550px;height:350px" >
+    <thead>
+        <tr>
+            <th field = "ChartType" width="50">類型</th>
+            <th field = "ChartScript" width="400" >JSON</th>
+        </tr>
+    </thead>
+</table>
+<div id="chartToolbar">
+    @*<a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="destroyItem()">刪除</a>*@
+</div>
+
+
+<script type="text/javascript">
+    var gridData;
+    chartReload(gridData);
+
+    $('#chartDG').datagrid({
+        view: detailview,
+        toolbar: '#chartToolbar',
+        detailFormatter: function (index, row) {
+            return '<div class="ddv"></div>';
+        },
+        columns: [[
+            { field: 'ChartId', title: 'ChartId', width: 50 },
+            { field: 'ChartType', title: 'Type', width: 80 },
+            { field: 'ChartScript', title: 'Script', width: 280 }
+        ]],
+        onExpandRow: function (index, row) {
+            var ddv = $(this).datagrid('getRowDetail', index).find('div.ddv');
+            ddv.panel({
+                border: false,
+                cache: true,
+                href: '@Url.Action("GetById", "Chart", new { area = "Admin" })' + '?id=' + row.ChartId ,
+                onLoad: function () {
+                    $('#chartDG').datagrid('fixDetailRowHeight', index);
+                    $('#chartDG').datagrid('selectRow', index);
+                    $('#chartDG').datagrid('getRowDetail', index).find('form').form('load', row);
+                }
+            });
+            $('#chartDG').datagrid('fixDetailRowHeight', index);
+        }
+    });
+
+    function chartSave(target) {
+        var tr = $(target).closest('.datagrid-row-detail').closest('tr').prev();
+        var index = parseInt(tr.attr('datagrid-row-index'));
+        chartSaveItem(index);
+    }
+    function chartCancel(target) {
+        var tr = $(target).closest('.datagrid-row-detail').closest('tr').prev();
+        var index = parseInt(tr.attr('datagrid-row-index'));
+        chartCancelItem(index);
+    }
+    function chartCancelItem(index) {
+        var row = $('#chartDG').datagrid('getRows')[index];
+        if (row.isNewRecord) {
+            $('#chartDG').datagrid('deleteRow', index);
+        } else {
+            $('#chartDG').datagrid('collapseRow', index);
+        }
+    }
+    function chartSaveItem(index) {
+        var row = $('#chartDG').datagrid('getRows')[index];
+        var url = '@Url.Action("SaveById", "Chart", new { area = "Admin" })';
+        $('#chartDG').datagrid('getRowDetail', index).find('form').form('submit', {
+            url: url,
+            onSubmit: function () {
+                return $(this).form('validate');
+            },
+            success: function (data) {
+                data = $.parseJSON(data);
+                data = eval('(' + data.rows + ')');
+                data.isNewRecord = false;
+                $('#chartDG').datagrid('collapseRow', index);
+                $('#chartDG').datagrid('updateRow', {
+                    index: index,
+                    row: data
+                });
+            }
+        });
+    }
+
+    function destroyItem() {
+        var item = $('#chartDG').datagrid('getSelected');
+        if (item) {
+            if (confirm('刪除 ' + item.ProjectName + ' 嗎?')) {
+
+                $.ajax({
+                    method: "POST",
+                    url: "@Url.Action("Remove", "Project", new { area = "Admin" })",
+                    data: { id: item.ProjectId }
+                }).done(function (data) {
+                    if (data.Code === '1') {
+                        $('#chartDG').datagrid('reload');
+                    } else {
+                        alert('Error');
+                    }
+                });
+            }
+        } else {
+            alert('沒選列');
+        }
+    }
+
+    function chartReload(gridData) {
+        $.ajax({
+            method: "GET",
+            async: false,
+            url: '@Url.Action("GetChart", "Chart", new { area = "Admin" })',
+            data: {}
+        }).done(function (data) {
+            gridData = $.parseJSON(data.rows);
+        });
+
+        setTimeout(function () {
+            $('#chartDG').datagrid('loadData', gridData);
+        }, 500);
+    }
+
+</script>

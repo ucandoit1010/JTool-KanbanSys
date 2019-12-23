@@ -1,0 +1,166 @@
+﻿<table id="prjDG" title="" style="width:650px;height:350px" >
+    <thead>
+        <tr>
+            <th field="ProjectId" >ID</th>
+            <th field="ProjectName" >名稱</th>
+            <th field="ProjectSQL">SQL</th>
+            @*<th field="CId" width="50">連線</th>*@
+        </tr>
+    </thead>
+</table>
+<div id="projToolbar">
+    <a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="destroyItem()">刪除</a>
+    <a href="#" class="easyui-linkbutton" iconCls="icon-reload" plain="true" onclick="reload()">重新整理</a>
+</div>
+<div id="wTestTbl" class="easyui-window" title="SQL Preview" data-options="modal:true,closed:true,iconCls:'icon-save'" style="width:650px;height:450px;padding:10px;">
+    <div id="wContent"></div>
+</div>
+
+<script type="text/javascript">
+    var gridData;
+    reload(gridData);
+
+    $('#prjDG').datagrid({
+        view: detailview,
+        singleSelect: true,
+        toolbar: '#projToolbar',
+        columns: [[
+            { field: 'ProjectId', title: 'Id', width: 50 },
+            { field: 'ProjectName', title: 'Name', width: 120 },
+            { field: 'ProjectSQL', title: 'SQL', width: 280 }
+        ]],
+        detailFormatter: function (index, row) {
+            return '<div class="ddv"></div>';
+        },
+        onExpandRow: function (index, row) {
+            var ddv = $(this).datagrid('getRowDetail', index).find('div.ddv');
+            ddv.panel({
+                border: false,
+                cache: true,
+                href: '@Url.Action("GetById", "Project", new { area = "Admin" })' + '?id=' + row.ProjectId,
+                onLoad: function () {
+                    $('#prjDG').datagrid('fixDetailRowHeight', index);
+                    $('#prjDG').datagrid('selectRow', index);
+                    $('#prjDG').datagrid('getRowDetail', index).find('form').form('load', row);
+                }
+            });
+            $('#prjDG').datagrid('fixDetailRowHeight', index);
+        }
+    });
+
+    function save1(target) {
+        var tr = $(target).closest('.datagrid-row-detail').closest('tr').prev();
+        var index = parseInt(tr.attr('datagrid-row-index'));
+        saveItem(index);
+    }
+    function cancel1(target) {
+        var tr = $(target).closest('.datagrid-row-detail').closest('tr').prev();
+        var index = parseInt(tr.attr('datagrid-row-index'));
+        cancelItem(index);
+    }
+    function cancelItem(index) {
+        var row = $('#prjDG').datagrid('getRows')[index];
+        if (row.isNewRecord) {
+            $('#prjDG').datagrid('deleteRow', index);
+        } else {
+            $('#prjDG').datagrid('collapseRow', index);
+        }
+    }
+    function saveItem(index) {
+        var row = $('#prjDG').datagrid('getRows')[index];
+        var url = '@Url.Action("SaveById", "Project", new { area = "Admin" })';
+        $('#prjDG').datagrid('getRowDetail', index).find('form').form('submit', {
+            url: url,
+            onSubmit: function () {
+                return $(this).form('validate');
+            },
+            success: function (data) {
+                data = $.parseJSON(data);
+
+                if (data.flag === 0) {
+                    $.messager.alert('Info', data.message, 'error');
+                } else {
+                    data = eval('(' + data.rows + ')');
+                    data.isNewRecord = false;
+
+                    $('#prjDG').datagrid('collapseRow', index);
+                    $('#prjDG').datagrid('updateRow', {
+                        index: index,
+                        row: data
+                    });
+                }
+            }
+        });
+    }
+
+    function test(target) {
+        var sqlData = $('#prjEditTable').find('tr:eq(1)').find('td:eq(1)').find('textarea').val();
+        
+        $.ajax({
+            method: "POST",
+            url: "@Url.Action("Test", "Project", new { area = "Admin" })",
+            data: { sql: sqlData }
+        }).done(function (data) {
+            $('#wContent').html('');
+            $('#wContent').html(data);
+            $('#wTestTbl').window('open');
+            $('#testTable').datagrid();
+        });
+        
+    }
+
+    function destroyItem() {
+        var item = $('#prjDG').datagrid('getSelected');
+        if (item) {
+            if (confirm('刪除 ' + item.ProjectName + ' 嗎?')) {
+
+                $.ajax({
+                    method: "POST",
+                    url: "@Url.Action("Remove", "Project", new { area = "Admin" })",
+                    data: { id: item.ProjectId }
+                }).done(function (data) {
+                    if (data.Code === '1') {
+                        $('#prjDG').datagrid('reload');
+                    } else {
+                        alert('Error');
+                    }
+                });
+
+            }
+        } else {
+            alert('沒選列');
+        }
+    }
+
+    function reload(gridData) {
+        $.ajax({
+            method: "GET",
+            async: false,
+            url: '@Url.Action("GetProjectList", "Project", new { area = "Admin" })',
+            data: {}
+        }).done(function (data) {
+            gridData = $.parseJSON(data.rows);
+        });
+
+        setTimeout(function () {
+            $('#prjDG').datagrid('loadData', gridData);
+        }, 500);
+    }
+
+    function make(target) {
+        var item = $('#prjDG').datagrid('getSelected');
+        $.ajax({
+            method: "GET",
+            async: false,
+            url: '@Url.Action("CreateURL", "Project", new { area = "Admin" })',
+            data: { id: item.ProjectId }
+        }).done(function (data) {
+            if (data.Code == '0') {
+                window.open(data.ResponseData);
+            } else {
+                $.messager.alert('Info', data.Message, 'error');
+            }
+        });
+    }
+
+</script>

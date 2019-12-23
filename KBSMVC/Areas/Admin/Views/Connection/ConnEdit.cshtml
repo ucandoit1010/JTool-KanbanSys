@@ -1,0 +1,28 @@
+﻿<form method="post">
+    <table class="dv-table" style="width:450px;background:#fafafa;padding:5px;margin-top:5px;">
+        <tr>
+            <td>名稱</td>
+            <td><input name="AliasName" class="easyui-textbox" required="true" /></td>
+        </tr>
+        <tr>
+            <td>連線字串</td>
+            <td>
+                <input name="ConnStr" class="easyui-textbox" style="width:400px;height:200px" required="true" data-options="multiline:true" />
+                <input type="hidden" name="CId" value="CId" />
+
+            </td>
+        </tr>
+        <tr>
+            <td>類型</td>
+            <td>
+                <select class="easyui-combobox" name="DBType" editable="false" label="" style="width:100%"
+                        data-options="valueField:'Value',textField:'Text',method:'get',url:'@Url.Action("GetDBTypeList","Connection" , new { area = "Admin" })'"></select>
+            </td>
+
+        </tr>
+    </table>
+    <div style="padding:5px 0;text-align:right;padding-right:30px">
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-save" plain="true" onclick="connSave(this)">Save</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="connCancel(this)">Cancel</a>
+    </div>
+</form>

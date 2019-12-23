@@ -1,0 +1,125 @@
+﻿<table id="connDG" title="" style="width:550px;height:350px" >
+    <thead>
+        <tr>
+            <th field="CId" width="40">ID</th>
+            <th field="AliasName" width="80">名稱</th>
+            <th field="ConnStr" width="350">連線字串</th>
+        </tr>
+    </thead>
+</table>
+<div id="connToolbar">
+    <a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="connDestroyItem()">刪除</a>
+    <a href="#" class="easyui-linkbutton" iconCls="icon-reload" plain="true" onclick="connReload()">重新整理</a>
+</div>
+
+
+<script type="text/javascript">
+    var gridData;
+    connReload(gridData);
+
+    $('#connDG').datagrid({
+        view: detailview,
+        toolbar: '#connToolbar',
+        detailFormatter: function (index, row) {
+            return '<div class="ddv"></div>';
+        },
+        columns: [[
+            { field: 'CId', title: 'CId', width: 50 },
+            { field: 'AliasName', title: 'AliasName', width: 120 },
+            { field: 'ConnStr', title: 'ConnStr', width: 280 }
+        ]],
+        onExpandRow: function (index, row) {
+            var ddv = $(this).datagrid('getRowDetail', index).find('div.ddv');
+            ddv.panel({
+                border: false,
+                cache: true,
+                href: '@Url.Action("GetById", "Connection", new { area = "Admin" })' + '?id=' + row.CId ,
+                onLoad: function () {
+                    $('#connDG').datagrid('fixDetailRowHeight', index);
+                    $('#connDG').datagrid('selectRow', index);
+                    $('#connDG').datagrid('getRowDetail', index).find('form').form('load', row);
+                }
+            });
+            $('#connDG').datagrid('fixDetailRowHeight', index);
+        }
+    });
+
+    function connSave(target) {
+        var tr = $(target).closest('.datagrid-row-detail').closest('tr').prev();
+        var index = parseInt(tr.attr('datagrid-row-index'));
+        connSaveItem(index);
+    }
+    function connCancel(target) {
+        var tr = $(target).closest('.datagrid-row-detail').closest('tr').prev();
+        var index = parseInt(tr.attr('datagrid-row-index'));
+        connCancelItem(index);
+    }
+    function connCancelItem(index) {
+        var row = $('#connDG').datagrid('getRows')[index];
+        if (row.isNewRecord) {
+            $('#connDG').datagrid('deleteRow', index);
+        } else {
+            $('#connDG').datagrid('collapseRow', index);
+        }
+    }
+    function connSaveItem(index) {
+        var row = $('#connDG').datagrid('getRows')[index];
+        var url = '@Url.Action("SaveById", "Connection", new { area = "Admin" })';
+        $('#connDG').datagrid('getRowDetail', index).find('form').form('submit', {
+            url: url,
+            onSubmit: function () {
+                return $(this).form('validate');
+            },
+            success: function (data) {
+                data = $.parseJSON(data);
+                data = eval('(' + data.rows + ')');
+                data.isNewRecord = false;
+
+                $('#connDG').datagrid('collapseRow', index);
+                $('#connDG').datagrid('updateRow', {
+                    index: index,
+                    row: data
+                });
+            }
+        });
+    }
+
+    function connDestroyItem() {
+        var item = $('#connDG').datagrid('getSelected');
+        if (item) {
+            if (confirm('刪除 ' + item.AliasName + ' 嗎?')) {
+
+                $.ajax({
+                    method: "POST",
+                    url: "@Url.Action("Remove", "Connection", new { area = "Admin" })",
+                    data: { id: item.CId }
+                }).done(function (data) {
+                    if (data.Code === '1') {
+                        connReload(gridData);
+                    } else {
+                        alert(data.Message);
+                    }
+                });
+
+            }
+        } else {
+            alert('沒選列');
+        }
+    }
+
+    function connReload(gridData) {
+        $.ajax({
+            method: "GET",
+            async: false,
+            url: '@Url.Action("GetConnList", "Parent", new { area = "Admin" })',
+            data: {}
+        }).done(function (data) {
+            gridData = $.parseJSON(data.rows);
+        });
+
+        setTimeout(function () {
+            $('#connDG').datagrid('loadData', gridData);
+        }, 500);
+    }
+
+</script>

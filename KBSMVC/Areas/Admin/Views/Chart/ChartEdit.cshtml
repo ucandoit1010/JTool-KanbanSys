@@ -1,0 +1,18 @@
+﻿<form method="post">
+    <table class="dv-table" style="width:100%;background:#fafafa;padding:5px;margin-top:5px;">
+        <tr>
+            <td>名稱</td>
+            <td><input name="ChartType" class="easyui-textbox" required="true" /></td>
+        </tr>
+        <tr>
+            <td>JSON</td>
+            <td><input name="ChartScript" class="easyui-textbox" style="width:400px;height:200px" required="true" data-options="multiline:true" />
+            <input type="hidden" name="ChartId" value="ChartId" />
+            </td>
+        </tr>
+    </table>
+    <div style="padding:5px 0;text-align:right;padding-right:30px">
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-save" plain="true" onclick="chartSave(this)">Save</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="chartCancel(this)">Cancel</a>
+    </div>
+</form>
