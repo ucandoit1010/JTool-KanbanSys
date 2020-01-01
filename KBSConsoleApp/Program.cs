@@ -30,11 +30,12 @@ namespace KBSConsoleApp
             
             ITestData testData = new TestData();
             DataTable currencyTable = testData.GetCurrencyTableById();
-            C3JSLine line = new C3JSLine(currencyTable, chartDAL.CurrentChart.ChartScript);
+            //C3JSLine line = new C3JSLine(currencyTable, chartDAL.CurrentChart.ChartScript);
 
-            string json = line.Generate("CurrencyType", "Currency");
+            //string json = line.Generate("CurrencyType", "Currency");
 
-            return json;
+            //return json;
+            return "";
         }
 
 

@@ -12,6 +12,7 @@ namespace ModelLib.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Chart()
         {
+            ChartProperties = new HashSet<ChartProperty>();
             KBProjects = new HashSet<KBProject>();
         }
 
@@ -25,6 +26,9 @@ namespace ModelLib.Models
         [Required]
         [StringLength(800)]
         public string ChartScript { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ChartProperty> ChartProperties { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<KBProject> KBProjects { get; set; }

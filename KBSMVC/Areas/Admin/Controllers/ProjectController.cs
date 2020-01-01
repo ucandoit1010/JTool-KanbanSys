@@ -8,17 +8,22 @@ using ModelLib.Models;
 using ModelLib.DAL;
 using Newtonsoft.Json;
 using ModelLib.Helper;
+using ModelLib.Models.ViewModel;
+
 
 namespace KBSMVC.Areas.Admin.Controllers
 {
     public class ProjectController : ParentController
     {
         private IKBProject iProj;
+        private IChartPropertyDAL iProperty;
+        private IProjectMappingDAL iProjectMapping;
 
         public ProjectController()
         {
             iProj = new KBProjectDAL();
-
+            iProperty = new ChartPropertyDAL();
+            iProjectMapping = new ProjectMappingDAL();
         }
 
         public ActionResult Create()
@@ -135,6 +140,8 @@ namespace KBSMVC.Areas.Admin.Controllers
             return PartialView(table);
         }
 
+
+
         [HttpGet]
         public ActionResult GetProjectList()
         {
@@ -190,6 +197,79 @@ namespace KBSMVC.Areas.Admin.Controllers
                 url);
 
             return Json(result, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult Mapping()
+        {
+            return PartialView("MappingView");
+        }
+
+
+
+        public ActionResult GetProjectChartPropertyList(int id)
+        {
+            KBProject project = iProj.GetKBProjectById(id);
+            List<ChartProperty> chartPropertiesList = iProperty.GetChartPropertyList(id);
+
+            var data = JsonConvert.SerializeObject(chartPropertiesList, new JsonSerializerSettings()
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            });
+
+            return Json(new { total = chartPropertiesList.Count, rows = data }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public ActionResult GetProjectChartProperty(int id)
+        {
+            KBProject project = iProj.GetKBProjectById(id);
+            DataTable table = iProj.TestSQL(project.ProjectSQL);
+            List<SelectListItem> selectList = new List<SelectListItem>();
+
+            if (table != null && table.Rows.Count > 0)
+            {
+                selectList = ConvertDataColumnToSelectItemList(table.Columns);
+            }
+
+            return Json(selectList, JsonRequestBehavior.AllowGet);
+        }
+
+
+        [HttpPost]
+        public ActionResult UpdateMapping(int CPId, int ProjectId, string Column)
+        {
+            JSONResult result = new JSONResult();
+            ProjectMapping mapping = null;
+
+            mapping = iProjectMapping.UpdateMappig(ProjectId, CPId, Column);
+            if (mapping == null)
+            {
+                result.Code = "1";
+                result.Message = SuccessMessage;
+            }
+            else
+            {
+                result.Code = "0";
+                result.Message = ErrorMessage;
+            }
+
+            return Json(result);
+        }
+
+        private List<SelectListItem> ConvertDataColumnToSelectItemList(DataColumnCollection colsList)
+        {
+            List<SelectListItem> selectList = new List<SelectListItem>();
+
+            foreach (DataColumn item in colsList)
+            {
+                selectList.Add(new SelectListItem()
+                {
+                    Text = item.ColumnName,
+                    Value = item.ColumnName
+                });
+            }
+
+            return selectList;
         }
 
     }

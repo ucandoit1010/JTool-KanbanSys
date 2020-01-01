@@ -1,15 +1,20 @@
-﻿using System;
-
+﻿using ChartStructLib.Common;
+using System;
+using System.Collections.Generic;
+using System.Data;
 
 namespace ChartStructLib.Charts
 {
     public abstract class ChartBase
     {
-        public const string dataTag = "@Data";
-        public const string catelogTag = "@Catelog";
+        public string ChartJSONContent { get; set; }
 
 
-        public abstract string Generate(string axisColName, string valueColName);
 
+        /// <summary>
+        /// 產生JSON
+        /// </summary>
+        /// <returns></returns>
+        public abstract string Generate(string[] cols , string catalog);
     }
 }

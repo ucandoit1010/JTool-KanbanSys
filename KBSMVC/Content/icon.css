@@ -70,10 +70,12 @@
 .icon-link {
     background: url("icons/link.png") no-repeat center center;
 }
+.icon-setting {
+    background: url("icons/setting.png") no-repeat center center;
+}
 
-
-.icon-mini-add{
-	background:url('icons/mini_add.png') no-repeat center center;
+.icon-mini-add {
+    background: url('icons/mini_add.png') no-repeat center center;
 }
 .icon-mini-edit{
 	background:url('icons/mini_edit.png') no-repeat center center;

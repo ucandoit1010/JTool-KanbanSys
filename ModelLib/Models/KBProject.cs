@@ -9,6 +9,12 @@ namespace ModelLib.Models
     [Table("KBProject")]
     public partial class KBProject
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public KBProject()
+        {
+            ProjectMappings = new HashSet<ProjectMapping>();
+        }
+
         [Key]
         public int ProjectId { get; set; }
 
@@ -31,5 +37,8 @@ namespace ModelLib.Models
         public virtual Chart Chart { get; set; }
 
         public virtual Conn Conn { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ProjectMapping> ProjectMappings { get; set; }
     }
 }

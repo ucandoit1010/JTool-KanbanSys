@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
+using Newtonsoft.Json;
+
 
 namespace ChartStructLib.Charts
 {
@@ -9,6 +11,7 @@ namespace ChartStructLib.Charts
     {
         public DataTable Data { get; set; }
         public string ChartJson { get; set; }
+        public ChartStruct chartStruct { get; set; }
 
         public C3JSLine(DataTable table, string chartJson)
         {
@@ -16,43 +19,41 @@ namespace ChartStructLib.Charts
             ChartJson = chartJson;
         }
 
-        public override string Generate(string axisColName , string valueColName)
+        public override string Generate(string[] cols, string catalog)
         {
-            string dataStr = string.Format("'{0}'", valueColName);
-            string script = ChartJson;
-
-            string catalogStr = ParseDataAxis(axisColName);
-
-            if (Data != null || Data.Rows.Count > 0)
+            if (Data == null || Data.Rows.Count == 0)
             {
+                return string.Empty;
+            }
+
+            chartStruct = new ChartStruct();
+            chartStruct.columns = new List<List<object>>();
+            List<object> objList = null;
+            chartStruct.axis = new Common.Axis();
+            chartStruct.axis.x = new Common.X();
+            chartStruct.axis.x.type = catalog;
+
+            string[] cataAry = Data.AsEnumerable().Select(d => d.Field<string>(catalog)).ToArray();
+            chartStruct.axis.x.categories = string.Join(",", cataAry);
+            
+            chartStruct.axis.y = new Common.Y();
+            chartStruct.axis.y.label = string.Empty;
+
+            foreach (string col in cols)
+            {
+                objList = new List<object>();
+                objList.Insert(0, col);
                 foreach (DataRow row in Data.Rows)
                 {
-                    dataStr += "," + row[valueColName].ToString();
+                    objList.Add(row[col].ToString());
                 }
+
+                chartStruct.columns.Add(objList);
             }
 
-            script = script.Replace(catelogTag, catalogStr);
+            string json = JsonConvert.SerializeObject(new { data = chartStruct });
 
-            if (Data != null || Data.Rows.Count > 0)
-            {
-                script = script.Replace(dataTag, dataStr);
-            }
-            
-            return script;
-        }
-
-
-        /// <summary>
-        /// X軸
-        /// </summary>
-        /// <param name="colName"></param>
-        /// <returns></returns>
-        private string ParseDataAxis(string colName)
-        {
-            List<string> dataList = Data.AsEnumerable().Select(c => c.Field<string>(colName)).ToList();
-            string catalogStr = string.Join(",", dataList.Select(c => string.Format("'{0}'", c.ToString())).ToArray());
-
-            return catalogStr;
+            return ChartJson.Replace("@Content", json);
         }
 
     }

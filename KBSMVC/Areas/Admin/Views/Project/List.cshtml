@@ -12,8 +12,11 @@
     <a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="destroyItem()">刪除</a>
     <a href="#" class="easyui-linkbutton" iconCls="icon-reload" plain="true" onclick="reload()">重新整理</a>
 </div>
-<div id="wTestTbl" class="easyui-window" title="SQL Preview" data-options="modal:true,closed:true,iconCls:'icon-save'" style="width:650px;height:450px;padding:10px;">
+<div id="wTestTbl" class="easyui-window" title="SQL Preview" data-options="modal:true,closed:true,iconCls:'icon-link'" style="width:650px;height:450px;padding:10px;">
     <div id="wContent"></div>
+</div>
+<div id="mappingInfo" class="easyui-window" title="Mapping" data-options="modal:true,closed:true,iconCls:'icon-setting'" style="width:650px;height:450px;padding:10px;">
+    <div id="mappingContent"></div>
 </div>
 
 <script type="text/javascript">
@@ -160,6 +163,19 @@
             } else {
                 $.messager.alert('Info', data.Message, 'error');
             }
+        });
+    }
+
+    function mapping(target) {
+        var item = $('#prjDG').datagrid('getSelected');
+        $.ajax({
+            method: "GET",
+            async: false,
+            url: '@Url.Action("MappingView", "Project", new { area = "Admin" })',
+            data: { id: item.ProjectId }
+        }).done(function (data) {
+            $('#mappingContent').html(data);
+            $('#mappingInfo').window('open');
         });
     }
 

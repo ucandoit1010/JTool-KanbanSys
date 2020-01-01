@@ -12,12 +12,12 @@ namespace ModelLib.Models
         {
         }
 
-        public virtual DbSet<Card> Cards { get; set; }
-        public virtual DbSet<CardCatalog> CardCatalogs { get; set; }
         public virtual DbSet<Chart> Charts { get; set; }
+        public virtual DbSet<ChartProperty> ChartProperties { get; set; }
         public virtual DbSet<Conn> Conns { get; set; }
+        public virtual DbSet<CurrencyJPY> CurrencyJPies { get; set; }
         public virtual DbSet<KBProject> KBProjects { get; set; }
-        public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
+        public virtual DbSet<ProjectMapping> ProjectMappings { get; set; }
         public virtual DbSet<CurrencyTest> CurrencyTests { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -25,6 +25,11 @@ namespace ModelLib.Models
             modelBuilder.Entity<Chart>()
                 .Property(e => e.ChartType)
                 .IsUnicode(false);
+
+            modelBuilder.Entity<Chart>()
+                .HasMany(e => e.ChartProperties)
+                .WithRequired(e => e.Chart)
+                .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Chart>()
                 .HasMany(e => e.KBProjects)
@@ -40,12 +45,33 @@ namespace ModelLib.Models
                 .WithRequired(e => e.Conn)
                 .WillCascadeOnDelete(false);
 
+            modelBuilder.Entity<CurrencyJPY>()
+                .Property(e => e.Mon)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<CurrencyJPY>()
+                .Property(e => e.Currency)
+                .HasPrecision(10, 4);
+
+            modelBuilder.Entity<CurrencyJPY>()
+                .Property(e => e.CurrencyType)
+                .IsUnicode(false);
+
             modelBuilder.Entity<KBProject>()
                 .Property(e => e.ProjectSQL)
                 .IsUnicode(false);
 
             modelBuilder.Entity<KBProject>()
                 .Property(e => e.Url)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<KBProject>()
+                .HasMany(e => e.ProjectMappings)
+                .WithRequired(e => e.KBProject)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<ProjectMapping>()
+                .Property(e => e.PropertyName)
                 .IsUnicode(false);
 
             modelBuilder.Entity<CurrencyTest>()

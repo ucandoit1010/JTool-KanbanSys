@@ -127,5 +127,15 @@ namespace ModelLib.DAL
             return _db.KBProjects.SingleOrDefault(k => k.Url == url);
         }
 
+        public List<KBProject> GetKProjectPropertyList(int chartId)
+        {
+            var list = _db.KBProjects.Join(
+                    _db.ChartProperties.Where(k => k.ChartId == chartId),
+                    x => x.ChartId,
+                    s => s.ChartId,
+                    ((x, s) => x)).ToList();
+            return list;
+        }
+
     }
 }

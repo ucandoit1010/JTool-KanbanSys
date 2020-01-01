@@ -51,13 +51,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DAL\ChartDAL.cs" />
+    <Compile Include="DAL\ChartPropertyDAL.cs" />
     <Compile Include="DAL\ConnectionDAL.cs" />
     <Compile Include="DAL\DALBase.cs" />
     <Compile Include="DAL\IChartDAL.cs" />
+    <Compile Include="DAL\IChartPropertyDAL.cs" />
     <Compile Include="DAL\IConnectionDAL.cs" />
     <Compile Include="DAL\IKBProject.cs" />
+    <Compile Include="DAL\IProjectMappingDAL.cs" />
     <Compile Include="DAL\ITestData.cs" />
     <Compile Include="DAL\KBProjectDAL.cs" />
+    <Compile Include="DAL\ProjectMappingDAL.cs" />
     <Compile Include="DAL\TestData.cs" />
     <Compile Include="Extend\DataTableExtend.cs" />
     <Compile Include="Helper\ADONETReaderHelper.cs" />
@@ -67,13 +71,17 @@
     <Compile Include="Models\Card.cs" />
     <Compile Include="Models\CardCatalog.cs" />
     <Compile Include="Models\Chart.cs" />
-    <Compile Include="Models\Conn.cs" />
+    <Compile Include="Models\ChartProperty.cs" />
     <Compile Include="Models\ConnContext.cs" />
+    <Compile Include="Models\ViewModel\ChartPropertyProjectViewModel.cs" />
+    <Compile Include="Models\Conn.cs" />
+    <Compile Include="Models\CurrencyJPY.cs" />
     <Compile Include="Models\CurrencyTest.cs" />
     <Compile Include="Models\ConnDBType.cs" />
     <Compile Include="Models\ICurrent.cs" />
     <Compile Include="Models\JSONResult.cs" />
     <Compile Include="Models\KBProject.cs" />
+    <Compile Include="Models\ProjectMapping.cs" />
     <Compile Include="Models\ProjTest.cs" />
     <Compile Include="Models\sysdiagram.cs" />
     <Compile Include="Models\sysdiagrams.cs" />

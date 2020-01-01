@@ -1,0 +1,120 @@
+﻿
+<div style="width:500px;padding:8px;">
+    <div>
+        <select class="easyui-combobox" id="selProj" name="selProj" editable="false" label="Project:" style="width:100%"
+                data-options="valueField:'Value',textField:'Text',method:'get',url:'@Url.Action("GetProjectSelectList","Parent" , new { area = "Admin" })'"></select>
+    </div>
+    <div style="padding:10px;">
+        <table id="mpDG" title="" style="width:475px;height:300px">
+            <thead>
+                <tr>
+                </tr>
+            </thead>
+        </table>
+        <div id="propertyToolbar">
+            <a href="#" class="easyui-linkbutton" iconCls="icon-save" plain="true" onclick="crtCatalog()">Save</a>
+            @*<a href="#" class="easyui-linkbutton" iconCls="icon-reload" plain="true" onclick="crtData()">新增Data</a>*@
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    var editIndex;
+
+    $('#selProj').combobox({
+        onChange: function (newValue, oldValue) {
+            $.ajax({
+                method: "POST",
+                url: "@Url.Action("GetProjectChartPropertyList", "Project", new { area = "Admin" })",
+                data: { id: newValue }
+            }).done(function (data) {
+                gridData = $.parseJSON(data.rows);
+                $('#mpDG').datagrid('loadData', gridData);
+            });
+        }
+    });
+
+    var mpDG = $('#mpDG').datagrid({
+        singleSelect: true,
+        toolbar: '#propertyToolbar',
+        columns: [[
+            { field: 'CPId', title: 'Id', width: 30 },
+            { field: 'CPName', title: 'Property', width: 130 },
+            {
+                field: 'Column', title: 'Column', width: 130,
+                editor: {
+                    type: 'combobox',
+                    options: {
+                        valueField: 'Text',
+                        textField: 'Text',
+                        method: 'get',
+                        url: '@Url.Action("GetProjectChartProperty", "Project" , new { area = "Admin" , id = 1 })',
+                        required: true
+                    }
+                }
+            }
+        ]],
+        onEndEdit: onEndEdit,
+        onClickRow: onClickCell,
+        formatter: function (value, row) {
+            return row.Text;
+        }
+    });
+
+
+    function onClickCell(index, field) {
+        if (editIndex != index) {
+            if (endEditing()) {
+                $('#mpDG').datagrid('selectRow', index).datagrid('beginEdit', index);
+                var ed = $('#mpDG').datagrid('getEditor', { index: index, field: field });
+                if (ed) {
+                    ($(ed.target).data('textbox') ? $(ed.target).textbox('textbox') : $(ed.target)).focus();
+                }
+                editIndex = index;
+            } else {
+                setTimeout(function () {
+                    $('#mpDG').datagrid('selectRow', editIndex);
+                }, 0);
+            }
+        }
+    }
+
+    function endEditing() {
+        if (editIndex == undefined) { return true }
+        if ($('#mpDG').datagrid('validateRow', editIndex)) {
+            $('#mpDG').datagrid('endEdit', editIndex);
+            editIndex = undefined;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function onEndEdit(index, row) {
+        var ed = $(this).datagrid('getEditor', {
+            index: index,
+            field: 'Column'
+        });
+        row.Column = $(ed.target).combobox('getText');
+        console.log($('#selProj').combobox('getValue'));
+        console.log($(this).datagrid('getChanges'));
+
+        var projId = $('#selProj').combobox('getValue');
+        var change = $(this).datagrid('getChanges');
+
+        $.ajax({
+            method: "POST",
+            url: "@Url.Action("UpdateMapping", "Project", new { area = "Admin" })",
+            data: { ProjectId: projId }
+        }).done(function (data) {
+            if (data.Code == '0') {
+                window.open(data.Message);
+            } else {
+                $.messager.alert('Info', data.message, 'error');
+            }
+            //gridData = $.parseJSON(data.rows);
+            //$('#mpDG').datagrid('loadData', gridData);
+        });
+    }
+</script>

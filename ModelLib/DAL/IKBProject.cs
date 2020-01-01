@@ -26,5 +26,7 @@ namespace ModelLib.DAL
 
         KBProject GetProjectByURL(string url);
 
+        List<KBProject> GetKProjectPropertyList(int chartId);
+
     }
 }
