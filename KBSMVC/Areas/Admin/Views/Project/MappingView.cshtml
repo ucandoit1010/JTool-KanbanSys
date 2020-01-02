@@ -12,7 +12,7 @@
             </thead>
         </table>
         <div id="propertyToolbar">
-            <a href="#" class="easyui-linkbutton" iconCls="icon-save" plain="true" onclick="crtCatalog()">Save</a>
+            @*<a href="#" class="easyui-linkbutton" iconCls="icon-save" plain="true" onclick="SaveMapping()">Save</a>*@
             @*<a href="#" class="easyui-linkbutton" iconCls="icon-reload" plain="true" onclick="crtData()">新增Data</a>*@
         </div>
     </div>
@@ -102,19 +102,19 @@
 
         var projId = $('#selProj').combobox('getValue');
         var change = $(this).datagrid('getChanges');
-
-        $.ajax({
-            method: "POST",
-            url: "@Url.Action("UpdateMapping", "Project", new { area = "Admin" })",
-            data: { ProjectId: projId }
-        }).done(function (data) {
-            if (data.Code == '0') {
-                window.open(data.Message);
-            } else {
-                $.messager.alert('Info', data.message, 'error');
-            }
-            //gridData = $.parseJSON(data.rows);
-            //$('#mpDG').datagrid('loadData', gridData);
-        });
+        debugger;
+        if (change.length > 0) {
+            $.ajax({
+                method: "POST",
+                url: "@Url.Action("UpdateMapping", "Project", new { area = "Admin" })",
+                data: { ProjectId: projId, CPId: change[0].CPId, Column: change[0].Column }
+            }).done(function (data) {
+                if (data.Code === '1') {
+                    $.messager.alert('Info', data.Message, 'info');
+                } else {
+                    $.messager.alert('Info', data.Message, 'error');
+                }
+            });
+        }
     }
 </script>

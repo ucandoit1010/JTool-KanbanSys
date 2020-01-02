@@ -209,14 +209,33 @@ namespace KBSMVC.Areas.Admin.Controllers
         public ActionResult GetProjectChartPropertyList(int id)
         {
             KBProject project = iProj.GetKBProjectById(id);
+            List<ProjectMapping> mappingList = iProjectMapping.GetProjectMappingsById(id);
             List<ChartProperty> chartPropertiesList = iProperty.GetChartPropertyList(id);
+            List<ChartPropertyProjectViewModel> chartPropProjList = new List<ChartPropertyProjectViewModel>();
+            ChartPropertyProjectViewModel chartProperty = null;
+            ProjectMapping mapping = null;
 
-            var data = JsonConvert.SerializeObject(chartPropertiesList, new JsonSerializerSettings()
+            foreach (ChartProperty item in chartPropertiesList)
+            {
+                chartProperty = new ChartPropertyProjectViewModel();
+                chartProperty.CPId = item.CPId;
+                chartProperty.CPName = item.CPName;
+
+                mapping = mappingList.SingleOrDefault(mp => mp.CPId == item.CPId);
+                if (mapping != null)
+                {
+                    chartProperty.Column = mapping.PropertyName;
+                }
+                chartPropProjList.Add(chartProperty);
+            }
+
+
+            var data = JsonConvert.SerializeObject(chartPropProjList, new JsonSerializerSettings()
             {
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore
             });
 
-            return Json(new { total = chartPropertiesList.Count, rows = data }, JsonRequestBehavior.AllowGet);
+            return Json(new { total = chartPropProjList.Count, rows = data }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpGet]
@@ -240,14 +259,28 @@ namespace KBSMVC.Areas.Admin.Controllers
         {
             JSONResult result = new JSONResult();
             ProjectMapping mapping = null;
+            ProjectMapping checkData;
+            List<ProjectMapping> mappingList = 
+                iProjectMapping.GetProjectMappingsById(ProjectId);
 
-            mapping = iProjectMapping.UpdateMappig(ProjectId, CPId, Column);
-            if (mapping == null)
+            if (mappingList.Count > 0)
             {
+                checkData = mappingList.SingleOrDefault(cp => cp.CPId == CPId);
+                if (checkData != null && string.Compare(checkData.PropertyName, Column) == 0)
+                {
+                    result.Code = "2";
+                    return Json(result);
+                }
+
+            }
+
+            try
+            {
+                mapping = iProjectMapping.UpdateMappig(ProjectId, CPId, Column);
                 result.Code = "1";
                 result.Message = SuccessMessage;
             }
-            else
+            catch (Exception err)
             {
                 result.Code = "0";
                 result.Message = ErrorMessage;

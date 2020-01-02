@@ -6,10 +6,10 @@ namespace ModelLib.Models.ViewModel
 {
     public class ChartPropertyProjectViewModel
     {
-        public int ProjectId { get; set; }
-        public string ColumnName { get; set; }
-        public int ChartId { get; set; }
-        public string PropertyName { get; set; }
+        public string Column { get; set; }
+        public int CPId { get; set; }
+        public string CPName { get; set; }
+
 
     }
 }

@@ -31,6 +31,7 @@ namespace ModelLib.DAL
                     mapping.ProjectId = projId;
                     mapping.CPId = cpId;
                     mapping.PropertyName = colName;
+                    _db.ProjectMappings.Add(mapping);
                 }
 
                 _db.SaveChanges();
