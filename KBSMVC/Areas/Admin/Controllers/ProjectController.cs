@@ -32,16 +32,17 @@ namespace KBSMVC.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public ActionResult Save(string projName, string projSQL, string chartType)
+        public ActionResult Save(string projName, string projSQL, string chartType, string connType)
         {
             KBProject project = new KBProject();
-            project.CId = Convert.ToInt32(chartType);
+            project.CId = Convert.ToInt32(connType);
+            project.ChartId = Convert.ToByte(chartType);
             project.ProjectName = projName;
             project.ProjectSQL = projSQL;
             project.IsEnable = true;
 
             JSONResult result = new JSONResult();
-            
+
             if (iProj.CreateKBProject(project) > 0)
             {
                 result.Code = "1";
