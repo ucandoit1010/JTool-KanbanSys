@@ -14,7 +14,6 @@ namespace ModelLib.Models
 
         public int ProjectId { get; set; }
 
-        [Required]
         [StringLength(40)]
         public string PropertyName { get; set; }
 

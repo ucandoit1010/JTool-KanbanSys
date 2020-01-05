@@ -20,15 +20,29 @@ namespace ModelLib.DAL
             }
 
             int rows = 0;
+            List<ChartProperty> chartPropertyList;
 
-            //using (ConnContext db = new ConnContext())
-            //{
-            //    db.KBProjects.Add(proj);
-            //    rows = db.SaveChanges();
-            //}
+            try
+            {
+                _db.KBProjects.Add(proj);
+                rows = _db.SaveChanges();
 
-            _db.KBProjects.Add(proj);
-            rows = _db.SaveChanges();
+                chartPropertyList = _db.ChartProperties.Where(cp => cp.ChartId == proj.ChartId).ToList();
+                foreach (var item in chartPropertyList)
+                {
+                    _db.ProjectMappings.Add(new ProjectMapping()
+                    {
+                        CPId = item.CPId,
+                        ProjectId = proj.ProjectId
+                    });
+                }
+
+                rows = _db.SaveChanges();
+            }
+            catch (Exception err)
+            {
+                throw err;
+            }
 
             return rows;
         }
@@ -70,8 +84,9 @@ namespace ModelLib.DAL
         {
             //using (ConnContext db = new ConnContext())
             //{
-            return _db.KBProjects.SingleOrDefault(c => c.CId == id);
+            //return _db.KBProjects.SingleOrDefault(c => c.CId == id);
             //}
+            return _db.KBProjects.SingleOrDefault(c => c.ProjectId == id);
         }
 
         public List<KBProject> GetKBProjectList()

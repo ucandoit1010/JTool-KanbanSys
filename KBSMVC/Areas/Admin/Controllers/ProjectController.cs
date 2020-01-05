@@ -210,7 +210,7 @@ namespace KBSMVC.Areas.Admin.Controllers
         {
             KBProject project = iProj.GetKBProjectById(id);
             List<ProjectMapping> mappingList = iProjectMapping.GetProjectMappingsById(id);
-            List<ChartProperty> chartPropertiesList = iProperty.GetChartPropertyList(id);
+            List<ChartProperty> chartPropertiesList = iProperty.GetChartPropertyList(project.ChartId);
             List<ChartPropertyProjectViewModel> chartPropProjList = new List<ChartPropertyProjectViewModel>();
             ChartPropertyProjectViewModel chartProperty = null;
             ProjectMapping mapping = null;
