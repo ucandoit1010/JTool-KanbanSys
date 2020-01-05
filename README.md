@@ -1,4 +1,5 @@
-# JTool-KanbanSys(Electronic Kanban System BETA)
+# JTool-KanbanSys
+#### Electronic Kanban System BETA
 
 
 * 2020/01/04 支援 ORACLE 驅動
