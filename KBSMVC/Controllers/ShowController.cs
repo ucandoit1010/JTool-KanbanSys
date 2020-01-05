@@ -28,7 +28,7 @@ namespace KBSMVC.Controllers
         {
             string json = string.Empty;
             KBProject projData = iProj.GetProjectByURL(id);
-            DataTable table = iProj.TestSQL(projData.ProjectSQL);
+            DataTable table = iProj.TestSQL(projData.ProjectSQL, projData.ProjectId);
             Lazy<C3JSLine> line = null;
             Lazy<C3JSBar> bar = null;
             

@@ -98,11 +98,12 @@
 
     function test(target) {
         var sqlData = $('#prjEditTable').find('tr:eq(1)').find('td:eq(1)').find('textarea').val();
-        
+        var projId = $("#id").val();
+
         $.ajax({
             method: "POST",
             url: "@Url.Action("Test", "Project", new { area = "Admin" })",
-            data: { sql: sqlData }
+            data: { sql: sqlData, id: projId }
         }).done(function (data) {
             $('#wContent').html('');
             $('#wContent').html(data);

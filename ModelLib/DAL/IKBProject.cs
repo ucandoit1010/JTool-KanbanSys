@@ -18,7 +18,7 @@ namespace ModelLib.DAL
 
         int RemoveKBProjectById(int id);
 
-        DataTable TestSQL(string sql);
+        DataTable TestSQL(string sql, int projId);
 
         int UpdateUrlById(KBProject proj);
 

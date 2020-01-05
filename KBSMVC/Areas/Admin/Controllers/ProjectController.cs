@@ -134,14 +134,13 @@ namespace KBSMVC.Areas.Admin.Controllers
 
 
         [HttpPost]
-        public ActionResult Test(string sql)
+        public ActionResult Test(string sql, string id)
         {
-            DataTable table = iProj.TestSQL(sql);
-            
+            DataTable table = iProj.TestSQL(sql, Convert.ToInt32(id));
+
             return PartialView(table);
         }
-
-
+        
 
         [HttpGet]
         public ActionResult GetProjectList()
@@ -243,7 +242,7 @@ namespace KBSMVC.Areas.Admin.Controllers
         public ActionResult GetProjectChartProperty(int id)
         {
             KBProject project = iProj.GetKBProjectById(id);
-            DataTable table = iProj.TestSQL(project.ProjectSQL);
+            DataTable table = iProj.TestSQL(project.ProjectSQL, project.ProjectId);
             List<SelectListItem> selectList = new List<SelectListItem>();
 
             if (table != null && table.Rows.Count > 0)

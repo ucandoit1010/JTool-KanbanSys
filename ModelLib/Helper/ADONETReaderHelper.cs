@@ -59,7 +59,6 @@ namespace ModelLib.Helper
                             }
                         }
                     }
-                    break;
             }
             return table;
         }

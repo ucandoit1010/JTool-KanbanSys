@@ -85,12 +85,34 @@ namespace ModelLib.DAL
             return _db.KBProjects.Where(k => k.IsEnable == true).ToList();
         }
 
-        public DataTable TestSQL(string sql)
+        public DataTable TestSQL(string sql, int projId)
         {
-            string conn = DBConnHelper.GetSQLConn();
+            //string conn = DBConnHelper.GetSQLConn();
             ADONETReaderHelper readerHelper = new ADONETReaderHelper();
 
-            return readerHelper.ExecuteSQL(sql, conn, DBConnType.SQLServer);
+            KBProject project = _db.KBProjects.SingleOrDefault(pj => pj.ProjectId == projId);
+            if (project == null)
+            {
+                return new DataTable();
+            }
+
+            Conn conn = project.Conn;
+
+            if (conn == null)
+            {
+                return new DataTable();
+            }
+
+            switch (conn.DBType)
+            {
+                //SQL SERVER
+                case "1":
+                    return readerHelper.ExecuteSQL(sql, conn.ConnStr, DBConnType.SQLServer);
+
+                //ORACLE
+                default:
+                    return readerHelper.ExecuteSQL(sql, conn.ConnStr, DBConnType.Oracle);
+            }
         }
 
         public int UpdateUrlById(KBProject proj)
