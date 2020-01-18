@@ -1,5 +1,5 @@
 ## JTool-KanbanSys-BETA(Electronic Kanban System)
-#### 功能、指標持續增加中，如有需要可至 ISSUE提出，製造業使用可談合作。
+#### 功能、指標持續增加中，如有需要可至 ISSUE提出，製造業使用可談合作小額收費。
 
 
 ![image](https://github.com/ucandoit1010/JTool-KanbanSys/blob/master/2020-01-17_22h09_09.png)
