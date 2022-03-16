@@ -1,6 +1,6 @@
 ## JTool-KanbanSys-BETA(Electronic Kanban System)
 #### 這是公司高層要我做出證明實力的項目。
-#### 證明了能力又如何，主管變得更害怕被下屬取代 ... 唉，因為自行開發沒有回扣可以收。
+#### 證明了能力又如何，主管變得更害怕被下屬取代 ... 前後整整發呆了13個月...我要說什麼呢。
 
 <a href="https://github.com/ucandoit1010/JTool-KanbanSys/wiki/JTool-KanbanSys-%E8%AA%AA%E6%98%8E">JTool-KanbanSys介紹</a>
 
